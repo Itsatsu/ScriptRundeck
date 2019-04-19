@@ -1,10 +1,10 @@
+#!/usr/bin/expect
+
 #Author...: Eric Gigondan (Itsatsu)
 #Date.....: 19/04/2019
 #Version..: 1.1
 #comment..: For Rundeck Debian server
 # Ssh key exchange script
-
-#!/usr/bin/expect 
 
 set ip [lindex $argv 0]
 set password [lindex $argv 1]
