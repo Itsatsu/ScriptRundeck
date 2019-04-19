@@ -1,0 +1,25 @@
+#!/usr/bin/expect 
+set ip [lindex $argv 0]
+set mdp [lindex $argv 1]
+set chemin [lindex $argv 2]
+spawn ssh-copy-id -i $chemin root@$ip 
+sleep 2
+expect {
+	"(yes/no)? " {
+	
+	send "yes\r"
+
+	expect "password:"	
+	sleep 4	
+	send "$mdp\r"
+	
+	}
+	
+	"password:" {
+#	sleep 4	
+	send "$mdp\r"
+	
+	}
+	}
+sleep 4
+interact "\r"
