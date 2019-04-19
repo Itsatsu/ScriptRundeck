@@ -2,8 +2,8 @@
 #Author...: Eric Gigondan (Itsatsu)
 #Date.....: 17/04/2019
 #Version..: 1.3
-#comment..: Installateur pour debian !
-#Script qui permet l'installation du serveur maitre Rundeck 
+#comment..: Installer for debian 9 !
+#Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
 apt-get install -y net-tools
 
@@ -77,11 +77,18 @@ chown rundeck:rundeck /etc/scriptrundeck
 chmod 755 /etc/scriptrundeck
 
 echo '
-#!/usr/bin/expect 
+#!/usr/bin/expect
+
+#Author...: Eric Gigondan (Itsatsu)
+#Date.....: 19/04/2019
+#Version..: 1.1
+#comment..: For Rundeck Debian server
+# Ssh key exchange script
+
 set ip [lindex $argv 0]
-set mdp [lindex $argv 1]
-set nomprojet [lindex $argv 2]
-spawn ssh-copy-id -i /var/rundeck/projects/$nomprojet/etc/id-rsa root@$ip 
+set password [lindex $argv 1]
+set project_name [lindex $argv 2]
+spawn ssh-copy-id -i /var/rundeck/projects/${project_name}/etc/id-rsa root@${ip} 
 sleep 2
 expect {
 	"(yes/no)? " {
@@ -89,74 +96,87 @@ expect {
 	send "yes\r"
 
 	expect "password:"	
-	sleep 3
-	send "$mdp\r"
+	sleep 4	
+	send "${password}\r"
 	
 	}
 	
 	"password:" {
-	sleep 3
-	send "$mdp\r"
+	sleep 4	
+	send "${password}\r"
 	
 	}
 	}
 sleep 4
 interact "\r"
-' >> /etc/scriptrundeck/echange_de_cle
+' >> /etc/scriptrundeck/key_exchange
 
-chown rundeck:rundeck /etc/scriptrundeck/echange_de_cle
-chmod 755 /etc/scriptrundeck/echange_de_cle
+chown rundeck:rundeck /etc/scriptrundeck/key_exchange
+chmod 755 /etc/scriptrundeck/key_exchange
 
 
 echo '
-#!/usr/bin/expect 
-set nomprojet [lindex $argv 0]
-set mdpcle [lindex $argv 1]
+#!/usr/bin/expect
+
+#Author...: Eric Gigondan (Itsatsu)
+#Date.....: 19/04/2019
+#Version..: 1.1
+#comment..: For Rundeck Debian server
+# Ssh key creation script
+
+set project_name [lindex $argv 0]
+set password_key [lindex $argv 1]
 spawn ssh-keygen 
 expect "id_rsa): "
-send "/var/rundeck/projects/$nomprojet/etc/id-rsa\r"
+send "/var/rundeck/projects/${project_name}/etc/id-rsa\r"
 expect "no passphrase:"
-send "$mdpcle\r"
+send "${password_key}\r"
 expect "passphrase again:"
-send "$mdpcle\r"
+send "${password_key}\r"
 sleep 2
-spawn chown rundeck:rundeck /var/rundeck/projects/$nomprojet/etc/id-rsa.pub
-spawn chown rundeck:rundeck /var/rundeck/projects/$nomprojet/etc/id-rsa
+spawn chown rundeck:rundeck /var/rundeck/projects/${project_name}/etc/id-rsa.pub
+spawn chown rundeck:rundeck /var/rundeck/projects/${project_name}/etc/id-rsa
 sleep 4
 interact "\r"
-' >> /etc/scriptrundeck/cree_une_cle
+' >> /etc/scriptrundeck/create_a_key
 
-chown rundeck:rundeck /etc/scriptrundeck/cree_une_cle
-chmod 755 /etc/scriptrundeck/cree_une_cle
+chown rundeck:rundeck /etc/scriptrundeck/create_a_key
+chmod 755 /etc/scriptrundeck/create_a_key
 
 echo "
 #!/usr/bin/expect
 
-set ipnoeud [lindex $argv 0]
-set mdp [lindex $argv 1]
-set nomduprojet [lindex $argv 2]
-set valeurcle [exec cut -c1-70 /var/rundeck/projects/${nomduprojet}/etc/id-rsa.pub]
+#Author...: Eric Gigondan (Itsatsu)
+#Date.....: 19/04/2019
+#Version..: 1.1
+#comment..: For Rundeck Debian server
+# Script to revoke an ssh key
 
-spawn ssh root@$ipnoeud sed -i \'/${valeurcle}/d\' /root/.ssh/authorized_keys
+set ip_node [lindex $argv 0]
+set password [lindex $argv 1]
+set project_name [lindex $argv 2]
+set key_value [exec cut -c1-80 /var/rundeck/projects/${project_name}/etc/id-rsa.pub]
+
+spawn ssh root@${ip_node} sed -i \'/${key_value}/d\' /root/.ssh/authorized_keys
 
 expect "password: "
-send "${mdp}\r"
+send "${password}\r"
 interact "\r"
 
-sleep 4" >> /etc/scriptrundeck/revoquer_une_cle
+sleep 4" >> /etc/scriptrundeck/revoke_a_key
 
-chown rundeck:rundeck /etc/scriptrundeck/revoquer_une_cle
-chmod 755 /etc/scriptrundeck/revoquer_une_cle
+chown rundeck:rundeck /etc/scriptrundeck/revoke_a_key
+chmod 755 /etc/scriptrundeck/revoke_a_key
 
 update-rc.d -f rundeckd defaults
 
 adduser rundeck root
 
-echo "Création des clefs ssl"
+echo "Création des certificats ssl"
 cd /etc/rundeck/ssl
-echo "Crée le mot de passe de la clef"
+echo "Crée le mot de passe de la clé"
 read pswdkey
-echo "Crée le mot de passe du coffre à clef"
+echo "Crée le mot de passe du coffre à clé"
 read pswdstore
 echo "Entrer l'adresse ip de ce serveur"
 read ipsrv
