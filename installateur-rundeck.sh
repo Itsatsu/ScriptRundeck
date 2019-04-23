@@ -147,8 +147,8 @@ echo "
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 19/04/2019
-#Version..: 1.1
+#Date.....: 23/04/2019
+#Version..: 1.2
 #comment..: For Rundeck Debian server
 # Script to revoke an ssh key
 
@@ -158,12 +158,12 @@ set project_name [lindex $argv 2]
 set key_value [exec cut -c1-80 /var/rundeck/projects/${project_name}/etc/id-rsa.pub]
 
 spawn ssh root@${ip_node} sed -i \'/${key_value}/d\' /root/.ssh/authorized_keys
-
+sleep 5
 expect "password: "
 send "${password}\r"
 interact "\r"
 
-sleep 4" >> /etc/scriptrundeck/revoke_a_key
+sleep 5" >> /etc/scriptrundeck/revoke_a_key
 
 chown rundeck:rundeck /etc/scriptrundeck/revoke_a_key
 chmod 755 /etc/scriptrundeck/revoke_a_key
