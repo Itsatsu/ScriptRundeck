@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 17/04/2019
-#Version..: 1.3
+#Date.....: 25/04/2019
+#Version..: 1.3.0.21
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
