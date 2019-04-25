@@ -31,7 +31,7 @@ apt-get install -y expect
 echo " "
 echo "Téléchargement du packet rundeck"
 mkdir /deck
-dlink="https://dl.bintray.com/rundeck/rundeck-deb/rundeck_3.0.20.20190408-1.201904081511_all.deb"
+dlink="https://dl.bintray.com/rundeck/rundeck-deb/rundeck_3.0.21.20190424-1.201904242241_all.deb"
 wget -P /deck ${dlink}
 
 echo "Installation de uuid"
