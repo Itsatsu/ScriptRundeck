@@ -1,14 +1,22 @@
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 19/04/2019
-#Version..: 1.1
+#Date.....: 13/05/2019
+#Version..: 1.2
 #comment..: For Rundeck Debian server
 # Ssh key exchange script
 
 set ip [lindex $argv 0]
 set password [lindex $argv 1]
 set project_name [lindex $argv 2]
+set node_name [lindex $argv 3]
+set node_description [exec cat /tmp/description]
+set node_tags [lindex $argv 4]
+set node_os [lindex $argv 5]
+set node_user [lindex $argv 6]
+
+spawn sed -i "5i <node name=\"${node_name}\" description=\"${node_description}\" tags=\"${node_tags}\" hostname=\"${ip}\" osFamily=\"unix\" osName=\"${node_os}\" username=\"${node_user}\"/>" /var/rundeck/projects/${project_name}/etc/resource.xml
+
 spawn ssh-copy-id -i /var/rundeck/projects/${project_name}/etc/id-rsa root@${ip} 
 sleep 2
 expect {
