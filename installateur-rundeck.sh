@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 25/04/2019
-#Version..: 1.3.0.21
+#Date.....: 14/05/2019
+#Version..: 1.4.0.21
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -119,20 +119,31 @@ echo '
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 19/04/2019
-#Version..: 1.1
+#Date.....: 13/05/2019
+#Version..: 1.2
 #comment..: For Rundeck Debian server
 # Ssh key creation script
 
 set project_name [lindex $argv 0]
 set password_key [lindex $argv 1]
-spawn ssh-keygen 
+spawn ssh-keygen
 expect "id_rsa): "
 send "/var/rundeck/projects/${project_name}/etc/id-rsa\r"
-expect "no passphrase:"
-send "${password_key}\r"
-expect "passphrase again:"
-send "${password_key}\r"
+expect {
+    "Overwrite (y/n)? " {
+      send "y\r"
+      sleep 2
+      expect "no passphrase:"
+      send "${password_key}\r"
+      expect "passphrase again:"
+      send "${password_key}\r"
+    }
+    "no passphrase:"{
+      send "${password_key}\r"
+      expect "passphrase again:"
+      send "${password_key}\r"
+    }
+}
 sleep 2
 spawn chown rundeck:rundeck /var/rundeck/projects/${project_name}/etc/id-rsa.pub
 spawn chown rundeck:rundeck /var/rundeck/projects/${project_name}/etc/id-rsa
