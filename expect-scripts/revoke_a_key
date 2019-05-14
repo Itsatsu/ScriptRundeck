@@ -1,16 +1,18 @@
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 23/04/2019
-#Version..: 1.2
+#Date.....: 14/05/2019
+#Version..: 1.3
 #comment..: For Rundeck Debian server
 # Script to revoke an ssh key
 
 set ip_node [lindex $argv 0]
 set password [lindex $argv 1]
 set project_name [lindex $argv 2]
+set node_name [lindex $argv 3]
 set key_value [exec cut -c1-80 /var/rundeck/projects/${project_name}/etc/id-rsa.pub]
 
+spawn sed -i "/.*name=\"${node_name}\".*/d" /var/rundeck/projects/${project_name}/etc/resource.xml
 spawn ssh root@${ip_node} sed -i \'/${key_value}/d\' /root/.ssh/authorized_keys
 sleep 5
 expect "password: "
