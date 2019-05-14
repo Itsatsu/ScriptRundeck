@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
 #Date.....: 14/05/2019
-#Version..: 1.4.1.21
+#Version..: 1.4.2.21
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -162,27 +162,29 @@ interact "\r"
 chown rundeck:rundeck /etc/scriptrundeck/create_a_key
 chmod 755 /etc/scriptrundeck/create_a_key
 
-echo "
+echo '
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 23/04/2019
-#Version..: 1.2
+#Date.....: 14/05/2019
+#Version..: 1.3
 #comment..: For Rundeck Debian server
 # Script to revoke an ssh key
 
 set ip_node [lindex $argv 0]
 set password [lindex $argv 1]
 set project_name [lindex $argv 2]
+set node_name [lindex $argv 3]
 set key_value [exec cut -c1-80 /var/rundeck/projects/${project_name}/etc/id-rsa.pub]
 
+spawn sed -i "/.*name=\"${node_name}\".*/d" /var/rundeck/projects/${project_name}/etc/resource.xml
 spawn ssh root@${ip_node} sed -i \'/${key_value}/d\' /root/.ssh/authorized_keys
 sleep 5
 expect "password: "
 send "${password}\r"
 interact "\r"
 
-sleep 5" >> /etc/scriptrundeck/revoke_a_key
+sleep 5' >> /etc/scriptrundeck/revoke_a_key
 
 chown rundeck:rundeck /etc/scriptrundeck/revoke_a_key
 chmod 755 /etc/scriptrundeck/revoke_a_key
