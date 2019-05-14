@@ -1,8 +1,8 @@
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 13/05/2019
-#Version..: 1.2
+#Date.....: 14/05/2019
+#Version..: 1.3
 #comment..: For Rundeck Debian server
 # Ssh key exchange script
 
@@ -10,7 +10,7 @@ set ip [lindex $argv 0]
 set password [lindex $argv 1]
 set project_name [lindex $argv 2]
 set node_name [lindex $argv 3]
-set node_description [exec cat /tmp/description]
+set node_description [exec cat /tmp/description${node_name}]
 set node_tags [lindex $argv 4]
 set node_os [lindex $argv 5]
 set node_user [lindex $argv 6]
