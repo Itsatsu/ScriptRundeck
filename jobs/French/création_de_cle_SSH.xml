@@ -22,7 +22,7 @@ au format id-rsa]]></description>
     <scheduleEnabled>true</scheduleEnabled>
     <sequence keepgoing='false' strategy='node-first'>
       <command>
-        <exec>expect /etc/scriptrundeck/cree_une_cle $RD_OPTION_NOM_DU_PROJET $RD_OPTION_PASSEPHRASE_DE_LA_CLE</exec>
+        <exec>expect /etc/scriptrundeck/create_a_key $RD_OPTION_NOM_DU_PROJET $RD_OPTION_PASSEPHRASE_DE_LA_CLE</exec>
       </command>
     </sequence>
     <uuid>a386c49b-9731-4ae9-903e-56deae37f9c3</uuid>
