@@ -1,0 +1,37 @@
+<joblist>
+  <job>
+    <context>
+      <options preserveOrder='true'>
+        <option name='adresse_ip' required='true'>
+          <description>Entrer l'adresse ip de la machine distante à révoquer</description>
+        </option>
+        <option name='mot_de_passe' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true' secure='true' valueExposed='true'>
+          <description>Enter le mot de passe root de la machine distante</description>
+        </option>
+        <option name='nom_du_projet' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true'>
+          <description><![CDATA[Entrer le nom du projet du quel fait partie la machine
+]]></description>
+        </option>
+        <option name='nom_du_noeud' required='true'>
+          <description>Enter le nom du noeud à supprimer </description>
+        </option>
+      </options>
+    </context>
+    <defaultTab>summary</defaultTab>
+    <description><![CDATA[Cette tâche permet de révoquer la clé ssh d'un noeud
+entre le serveur rundeck et une autre machine(noeud)]]></description>
+    <executionEnabled>true</executionEnabled>
+    <id>4f9edba2-86b8-4bd9-850e-62922a7b5bd0</id>
+    <loglevel>INFO</loglevel>
+    <name>révoquer la clé SSH publique d'un noeud </name>
+    <nodeFilterEditable>false</nodeFilterEditable>
+    <scheduleEnabled>false</scheduleEnabled>
+    <sequence keepgoing='false' strategy='node-first'>
+      <command>
+        <exec>expect /etc/scriptrundeck/revoquer_une_cle $RD_OPTION_ADRESSE_IP $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD</exec>
+      </command>
+    </sequence>
+    <timeout>30</timeout>
+    <uuid>4f9edba2-86b8-4bd9-850e-62922a7b5bd0</uuid>
+  </job>
+</joblist>

@@ -1,0 +1,61 @@
+<joblist>
+  <job>
+    <context>
+      <options preserveOrder='true'>
+        <option name='adresse_ip' required='true'>
+          <description>Entrer l'adresse ip de la machine distante à ajouter</description>
+        </option>
+        <option name='mot_de_passe' regex='[^ &apos;")(]*' required='true' secure='true' valueExposed='true'>
+          <description>Enter le mot de passe root de la machine distante</description>
+        </option>
+        <option name='nom_du_projet' regex='[^ &apos;")(]*' required='true'>
+          <description><![CDATA[Entrer le nom du projet du quel sera pris la clé 
+]]></description>
+        </option>
+        <option name='nom_du_noeud' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true'>
+          <description>Entrer le nom du noeud à ajouter</description>
+        </option>
+        <option name='description_du_noeud' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\]*'>
+          <description>Entrer la description du noeud à ajouter</description>
+        </option>
+        <option enforcedvalues='true' name='os_du_noeud' required='true' values='CentOs,Debian'>
+          <description>Entrer l'os du noeud</description>
+        </option>
+        <option name='tags_du_noeud' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true'>
+          <description>Entrer les tags utilisé pour les filtres (séparé par une virgule) ex(debian,web,test,...)</description>
+        </option>
+        <option name='utilisateur_du_noeud' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true'>
+          <description>Enter le nom de l'utilisateur du noeud ex (root ou technicien ou ...)</description>
+        </option>
+      </options>
+    </context>
+    <defaultTab>summary</defaultTab>
+    <description><![CDATA[Cette tâche permet l'echange de clé ssh
+entre le serveur rundeck et une autre machine(noeud)]]></description>
+    <executionEnabled>true</executionEnabled>
+    <id>9b613c53-5fbd-4ff0-932b-00c302b807f6</id>
+    <loglevel>INFO</loglevel>
+    <name>échange de clé SSH</name>
+    <nodeFilterEditable>false</nodeFilterEditable>
+    <notification>
+      <onsuccess>
+        <email recipients='eric.gigondan@operis.fr' subject='succès' />
+      </onsuccess>
+    </notification>
+    <notifyAvgDurationThreshold />
+    <scheduleEnabled>false</scheduleEnabled>
+    <sequence keepgoing='false' strategy='node-first'>
+      <command>
+        <exec>echo $RD_OPTION_DESCRIPTION_DU_NOEUD &gt;&gt; /tmp/description$RD_OPTION_NOM_DU_NOEUD</exec>
+      </command>
+      <command>
+        <exec>expect /etc/scriptrundeck/echange_de_cle $RD_OPTION_ADRESSE_IP $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD $RD_OPTION_TAGS_DU_NOEUD $RD_OPTION_OS_DU_NOEUD $RD_OPTION_UTILISATEUR_DU_NOEUD</exec>
+      </command>
+      <command>
+        <exec>rm /tmp/description$RD_OPTION_NOM_DU_NOEUD</exec>
+      </command>
+    </sequence>
+    <timeout>30</timeout>
+    <uuid>9b613c53-5fbd-4ff0-932b-00c302b807f6</uuid>
+  </job>
+</joblist>
