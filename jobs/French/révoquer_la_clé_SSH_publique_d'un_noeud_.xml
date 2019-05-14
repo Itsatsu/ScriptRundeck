@@ -28,7 +28,7 @@ entre le serveur rundeck et une autre machine(noeud)]]></description>
     <scheduleEnabled>false</scheduleEnabled>
     <sequence keepgoing='false' strategy='node-first'>
       <command>
-        <exec>expect /etc/scriptrundeck/revoquer_une_cle $RD_OPTION_ADRESSE_IP $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD</exec>
+        <exec>expect /etc/scriptrundeck/revoke_a_key $RD_OPTION_ADRESSE_IP $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD</exec>
       </command>
     </sequence>
     <timeout>30</timeout>
