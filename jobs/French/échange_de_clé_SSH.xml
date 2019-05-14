@@ -39,7 +39,7 @@ entre le serveur rundeck et une autre machine(noeud)]]></description>
     <nodeFilterEditable>false</nodeFilterEditable>
     <notification>
       <onsuccess>
-        <email recipients='eric.gigondan@operis.fr' subject='succès' />
+        <email recipients='test@test.fr' subject='succès' />
       </onsuccess>
     </notification>
     <notifyAvgDurationThreshold />
@@ -49,7 +49,7 @@ entre le serveur rundeck et une autre machine(noeud)]]></description>
         <exec>echo $RD_OPTION_DESCRIPTION_DU_NOEUD &gt;&gt; /tmp/description$RD_OPTION_NOM_DU_NOEUD</exec>
       </command>
       <command>
-        <exec>expect /etc/scriptrundeck/echange_de_cle $RD_OPTION_ADRESSE_IP $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD $RD_OPTION_TAGS_DU_NOEUD $RD_OPTION_OS_DU_NOEUD $RD_OPTION_UTILISATEUR_DU_NOEUD</exec>
+        <exec>expect /etc/scriptrundeck/key_exchange $RD_OPTION_ADRESSE_IP $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD $RD_OPTION_TAGS_DU_NOEUD $RD_OPTION_OS_DU_NOEUD $RD_OPTION_UTILISATEUR_DU_NOEUD</exec>
       </command>
       <command>
         <exec>rm /tmp/description$RD_OPTION_NOM_DU_NOEUD</exec>
