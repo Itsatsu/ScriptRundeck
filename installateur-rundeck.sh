@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 20/05/2019
-#Version..: 1.4.3.22
+#Date.....: 29/05/2019
+#Version..: 1.5.3.22
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -123,7 +123,7 @@ chown rundeck:rundeck /etc/scriptrundeck/key_exchange
 chmod 755 /etc/scriptrundeck/key_exchange
 
 
-echo '
+echo "
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
@@ -158,12 +158,12 @@ spawn chown rundeck:rundeck /var/rundeck/projects/${project_name}/etc/id-rsa.pub
 spawn chown rundeck:rundeck /var/rundeck/projects/${project_name}/etc/id-rsa
 sleep 4
 interact "\r"
-' >> /etc/scriptrundeck/create_a_key
+" >> /etc/scriptrundeck/create_a_key
 
 chown rundeck:rundeck /etc/scriptrundeck/create_a_key
 chmod 755 /etc/scriptrundeck/create_a_key
 
-echo '
+echo "
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
@@ -185,7 +185,7 @@ expect "password: "
 send "${password}\r"
 interact "\r"
 
-sleep 5' >> /etc/scriptrundeck/revoke_a_key
+sleep 5" >> /etc/scriptrundeck/revoke_a_key
 
 chown rundeck:rundeck /etc/scriptrundeck/revoke_a_key
 chmod 755 /etc/scriptrundeck/revoke_a_key
@@ -244,6 +244,130 @@ cd /etc/default
 echo "export RUNDECK_WITH_SSL=true" > rundeckd
 echo "export RDECK_HTTPS_PORT=4443" >> rundeckd
 
+echo "Voulez vous ajouter la connexion de Rundeck à un serveur smtp ( oui ou non )"
+read repsmtp
+if [ "${repsmtp}" == "oui" ]
+	then
+	echo "Entrer l'adresse email qui sera utilisé par rundeck"
+	read rundeck_mail
+	echo "Entrer le mot de passe de l'adresse email utilisé par rundeck"
+	read rundeck_mail_password
+	echo "Entrer l'adresse du serveur smtp sans le port"
+	read rundeck_smtp
+	echo "Entrer le port du serveur smtp"
+	read rundeck_smtp_port
+
+
+	echo "
+	grails.mail.default.from= ${rundeck_mail}
+	grails.mail.host=${rundeck_smtp}
+	grails.mail.port=${rundeck_smtp_port}
+	grails.mail.username=${rundeck_mail}
+	grails.mail.password=${rundeck_mail_password}">> /etc/rundeck/rundeck-config.properties
+fi
+
+echo "Voulez vous ajouter la connexion de Rundeck à un serveur LDAP ( oui ou non )"
+read repldap
+if [ "${repldap}" == "oui" ]
+then
+	echo "Entrer le providerUrl du ldap "
+	read providerldap
+	echo "Enter le bindDn (ex: CN=utilisateur,CN=Users,Dc=Entreprise,...)"
+	read binddn
+	echo "Enter le mot de passe du bind"
+	read bindpassword
+	echo "Enter les roles de la base dn (ex: DC=Entreprise,DC=Sitedistant )"
+	read rolebasedn
+	echo "Enter l' OU(Organizational Unit) du ldap qui sera accepté à utiliser rundeck "
+	read ldapgroup
+	echo"
+	activedirectory {
+		com.dtolabs.rundeck.jetty.jaas.JettyCachingLdapLoginModule required
+		debug="true "
+		contextFactory="com.sun.jndi.ldap.LdapCtxFactory "
+		providerUrl="${providerldap} "
+		bindDn="${binddn} "
+		bindPassword="${bindpassword} "
+		authenticationMethod="simple "
+		forceBindingLogin="true"
+		userBaseDn="${rolebasedn} "
+		userRdnAttribute="sAMAccountName"
+		userIdAttribute="sAMAccountName"
+		userPasswordAttribute="unicodePdw"
+		userObjectClass="user"
+		roleBaseDn="${rolebasedn}"
+		roleNameAttribute="cn"
+		roleMemberAttribute="member"
+		roleObjectClass="group"
+		cacheDurationMillis="300000"
+		reportStatistics="true";
+	};
+	"> /etc/rundeck/jaas-activedirectory.conf
+
+	chown rundeck:rundeck /etc/rundeck/jaas-activedirectory.conf
+	chmod 755 /etc/rundeck/jaas-activedirectory.conf
+
+	sed -i "s/\$JAAS_CONF/\/etc\/rundeck\/jaas-activedirectory.conf/"
+	sed -i "s/\$LOGIN_MODULE/activedirectory/"
+
+	echo "
+	description: Standard Users project level access control.
+context:
+  project: '.*' # all projects
+for:
+  resource:
+    - equals:
+        kind: job
+      allow: [read] # allow read jobs
+    - equals:
+        kind: node
+      allow: [read] # allow refresh node sources
+    - equals:
+        kind: event
+      allow: [read] # allow read/read events
+  adhoc:
+    - allow: [read] # allow read adhoc jobs
+  job:
+    - allow: [read] # allow read of all jobs
+  node:
+    - allow: [read] # allow read for nodes
+by:
+  group: ${ldapgroup}
+ 
+---
+ 
+description: A
+context:
+  application: 'rundeck'
+for:
+  resource:
+    - equals:
+        kind: project
+      allow: [read] # allow read of projects
+    - equals:
+        kind: system
+      allow: [read] # allow read executions
+    - equals:
+        kind: system_acl
+      allow: [read] # allow reading system ACL files
+  project:
+    - match:
+        name: '.*'
+      allow: [read] # allow read access of all projects or use 'admin'
+  project_acl:
+    - match:
+        name: '.*'
+      allow: [read] # allow reading project-specific ACL files
+  storage:
+    - allow: [read] # allow read access for /ssh-key/* storage content
+ 
+by:
+  group: ${ldapgroup} " > /etc/rundeck/${ldapgroup}.aclpolicy
+
+chown rundeck:rundeck /etc/rundeck/${ldapgroup}.aclpolicy	
+chmod 755 /etc/rundeck/${ldapgroup}.aclpolicy
+
+fi
 service rundeckd start
 
 rm ${rundeck}
