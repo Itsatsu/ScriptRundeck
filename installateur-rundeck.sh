@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 29/05/2019
-#Version..: 1.5.3.22
+#Date.....: 31/05/2019
+#Version..: 1.6.3.22
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -58,16 +58,13 @@ mysql -u root -p -e "CREATE database rundeck; CREATE USER 'rundeck'@'localhost' 
 
 service rundeckd start
 echo "Le serveur se construit"
-echo  -e "\033[30;41m cette operation prend 5 minutes, le script est toujours en cours \033[0m "
-sleep 1m
-echo -e "\033[30;41m Le script reprend dans 4 minutes \033[0m "
-sleep 1m
-echo -e "\033[30;41m Le script reprend dans 3 minutes \033[0m "
+echo  -e "\033[30;41m cette operation prend 3 minutes, le script est toujours en cours \033[0m "
 sleep 1m
 echo -e "\033[30;41m Le script reprend dans 2 minutes \033[0m "
 sleep 1m
-echo -e "\033[30;41m Le script reprend dans 1 minute \033[0m "
+echo -e "\033[30;41m Le script reprend dans 1 minuteO \033[0m "
 sleep 1m
+
 service rundeckd stop
 
 echo "Création de scripts suplémentaires"
@@ -123,7 +120,7 @@ chown rundeck:rundeck /etc/scriptrundeck/key_exchange
 chmod 755 /etc/scriptrundeck/key_exchange
 
 
-echo "
+echo '
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
@@ -136,7 +133,7 @@ set project_name [lindex $argv 0]
 set password_key [lindex $argv 1]
 
 spawn ssh-keygen
-expect "id_rsa):"
+expect "id_rsa:)"
 send "/var/rundeck/projects/${project_name}/etc/id-rsa\r"
 expect {
     "Overwrite (y/n)? " {
@@ -158,12 +155,12 @@ spawn chown rundeck:rundeck /var/rundeck/projects/${project_name}/etc/id-rsa.pub
 spawn chown rundeck:rundeck /var/rundeck/projects/${project_name}/etc/id-rsa
 sleep 4
 interact "\r"
-" >> /etc/scriptrundeck/create_a_key
+' >> /etc/scriptrundeck/create_a_key
 
 chown rundeck:rundeck /etc/scriptrundeck/create_a_key
 chmod 755 /etc/scriptrundeck/create_a_key
 
-echo "
+echo '
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
@@ -179,13 +176,13 @@ set node_name [lindex $argv 3]
 set key_value [exec cut -c1-80 /var/rundeck/projects/${project_name}/etc/id-rsa.pub]
 
 spawn sed -i "/.*name=\"${node_name}\".*/d" /var/rundeck/projects/${project_name}/etc/resource.xml
-spawn ssh root@${ip_node} sed -i \'/${key_value}/d\' /root/.ssh/authorized_keys
+spawn ssh root@${ip_node} sed -i \"/${key_value}/d\" /root/.ssh/authorized_keys
 sleep 5
 expect "password: "
 send "${password}\r"
 interact "\r"
 
-sleep 5" >> /etc/scriptrundeck/revoke_a_key
+sleep 5 ' >> /etc/scriptrundeck/revoke_a_key
 
 chown rundeck:rundeck /etc/scriptrundeck/revoke_a_key
 chmod 755 /etc/scriptrundeck/revoke_a_key
@@ -259,11 +256,11 @@ if [ "${repsmtp}" == "oui" ]
 
 
 	echo "
-	grails.mail.default.from= ${rundeck_mail}
-	grails.mail.host=${rundeck_smtp}
-	grails.mail.port=${rundeck_smtp_port}
-	grails.mail.username=${rundeck_mail}
-	grails.mail.password=${rundeck_mail_password}">> /etc/rundeck/rundeck-config.properties
+grails.mail.default.from= ${rundeck_mail}
+grails.mail.host=${rundeck_smtp}
+grails.mail.port=${rundeck_smtp_port}
+grails.mail.username=${rundeck_mail}
+grails.mail.password=${rundeck_mail_password}">> /etc/rundeck/rundeck-config.properties
 fi
 
 echo "Voulez vous ajouter la connexion de Rundeck à un serveur LDAP ( oui ou non )"
@@ -272,100 +269,45 @@ if [ "${repldap}" == "oui" ]
 then
 	echo "Entrer le providerUrl du ldap "
 	read providerldap
-	echo "Enter le bindDn (ex: CN=utilisateur,CN=Users,Dc=Entreprise,...)"
+	echo "Enter le bindDn (ex: CN=utilisateur,CN=Users,DC=Entreprise,...)"
 	read binddn
 	echo "Enter le mot de passe du bind"
 	read bindpassword
-	echo "Enter les roles de la base dn (ex: DC=Entreprise,DC=Sitedistant )"
+	echo "Enter les roles de la base dn (ex: dc=Entreprise,dc=Sitedistant )"
 	read rolebasedn
 	echo "Enter l' OU(Organizational Unit) du ldap qui sera accepté à utiliser rundeck "
 	read ldapgroup
-	echo"
-	activedirectory {
-		com.dtolabs.rundeck.jetty.jaas.JettyCachingLdapLoginModule required
-		debug="true "
-		contextFactory="com.sun.jndi.ldap.LdapCtxFactory "
-		providerUrl="${providerldap} "
-		bindDn="${binddn} "
-		bindPassword="${bindpassword} "
-		authenticationMethod="simple "
-		forceBindingLogin="true"
-		userBaseDn="${rolebasedn} "
-		userRdnAttribute="sAMAccountName"
-		userIdAttribute="sAMAccountName"
-		userPasswordAttribute="unicodePdw"
-		userObjectClass="user"
-		roleBaseDn="${rolebasedn}"
-		roleNameAttribute="cn"
-		roleMemberAttribute="member"
-		roleObjectClass="group"
-		cacheDurationMillis="300000"
-		reportStatistics="true";
-	};
-	"> /etc/rundeck/jaas-activedirectory.conf
+	echo "
+activedirectory {
+	com.dtolabs.rundeck.jetty.jaas.JettyCachingLdapLoginModule required
+	debug=\"true\"
+	contextFactory=\"com.sun.jndi.ldap.LdapCtxFactory\"
+	providerUrl=\"${providerldap}\"
+	bindDn=\"${binddn} \"
+	bindPassword=\"${bindpassword}\"
+	authenticationMethod=\"simple \"
+	forceBindingLogin=\"true\"
+	userBaseDn=\"${rolebasedn}\"
+	userRdnAttribute=\"sAMAccountName\"
+	userIdAttribute=\"sAMAccountName\"
+	userPasswordAttribute=\"unicodePdw\"
+	userObjectClass=\"user\"
+	roleBaseDn=\"${rolebasedn}\"
+	roleNameAttribute=\"cn\"
+	roleMemberAttribute=\"member\"
+	roleObjectClass=\"group\"
+	cacheDurationMillis=\"300000\"
+	reportStatistics=\"true\";
+};
+	" > /etc/rundeck/jaas-activedirectory.conf
 
 	chown rundeck:rundeck /etc/rundeck/jaas-activedirectory.conf
 	chmod 755 /etc/rundeck/jaas-activedirectory.conf
 
-	sed -i "s/\$JAAS_CONF/\/etc\/rundeck\/jaas-activedirectory.conf/"
-	sed -i "s/\$LOGIN_MODULE/activedirectory/"
+	sed -i "s/\$JAAS_CONF/\/etc\/rundeck\/jaas-activedirectory.conf/" /etc/rundeck/profile
+	sed -i "s/\$LOGIN_MODULE/activedirectory/" /etc/rundeck/profile
 
-	echo "
-	description: Standard Users project level access control.
-context:
-  project: '.*' # all projects
-for:
-  resource:
-    - equals:
-        kind: job
-      allow: [read] # allow read jobs
-    - equals:
-        kind: node
-      allow: [read] # allow refresh node sources
-    - equals:
-        kind: event
-      allow: [read] # allow read/read events
-  adhoc:
-    - allow: [read] # allow read adhoc jobs
-  job:
-    - allow: [read] # allow read of all jobs
-  node:
-    - allow: [read] # allow read for nodes
-by:
-  group: ${ldapgroup}
- 
----
- 
-description: A
-context:
-  application: 'rundeck'
-for:
-  resource:
-    - equals:
-        kind: project
-      allow: [read] # allow read of projects
-    - equals:
-        kind: system
-      allow: [read] # allow read executions
-    - equals:
-        kind: system_acl
-      allow: [read] # allow reading system ACL files
-  project:
-    - match:
-        name: '.*'
-      allow: [read] # allow read access of all projects or use 'admin'
-  project_acl:
-    - match:
-        name: '.*'
-      allow: [read] # allow reading project-specific ACL files
-  storage:
-    - allow: [read] # allow read access for /ssh-key/* storage content
- 
-by:
-  group: ${ldapgroup} " > /etc/rundeck/${ldapgroup}.aclpolicy
-
-chown rundeck:rundeck /etc/rundeck/${ldapgroup}.aclpolicy	
-chmod 755 /etc/rundeck/${ldapgroup}.aclpolicy
+	sed -i "s/admin/${ldapgroup}/" /etc/rundeck/admin.aclpolicy
 
 fi
 service rundeckd start
@@ -376,3 +318,8 @@ rmdir /deck
 echo "Le serveur est en cours de démarrage"
 echo "L'interface web sera disponible dans 5 minutes à l'adresse suivante: "
 echo "https://${ipsrv}:4443"
+if [ "${repldap}" == "non" ]
+then
+echo "Pseudo: admin 
+Mot de passe : admin " 
+fi
