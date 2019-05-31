@@ -62,7 +62,7 @@ echo  -e "\033[30;41m cette operation prend 3 minutes, le script est toujours en
 sleep 1m
 echo -e "\033[30;41m Le script reprend dans 2 minutes \033[0m "
 sleep 1m
-echo -e "\033[30;41m Le script reprend dans 1 minuteO \033[0m "
+echo -e "\033[30;41m Le script reprend dans 1 minute \033[0m "
 sleep 1m
 
 service rundeckd stop
