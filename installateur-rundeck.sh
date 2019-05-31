@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
 #Date.....: 31/05/2019
-#Version..: 1.6.3.22
+#Version..: 1.62.3.22
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -283,9 +283,9 @@ activedirectory {
 	debug=\"true\"
 	contextFactory=\"com.sun.jndi.ldap.LdapCtxFactory\"
 	providerUrl=\"${providerldap}\"
-	bindDn=\"${binddn} \"
+	bindDn=\"${binddn}\"
 	bindPassword=\"${bindpassword}\"
-	authenticationMethod=\"simple \"
+	authenticationMethod=\"simple\"
 	forceBindingLogin=\"true\"
 	userBaseDn=\"${rolebasedn}\"
 	userRdnAttribute=\"sAMAccountName\"
