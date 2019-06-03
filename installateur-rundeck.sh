@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 31/05/2019
-#Version..: 1.62.3.22
+#Date.....: 03/06/2019
+#Version..: 1.63.3.22
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -53,7 +53,7 @@ echo "Création de la base de donnée rundeck et de l'utilisateur rundeck"
 echo -e "\033[30;41m Enter le mot de passe de l'utilisateur rundeck qui va etre crée dans mysql \033[0m "
 echo -e "\033[30;41m ( minimum 1 majuscule, 1 minuscule, 1 chiffre) \033[0m "
 read pswdmysql
-echo "Entrer le mot de passe root"
+echo -e "\033[30;41m Entrer le mot de passe root \033[0m "
 mysql -u root -p -e "CREATE database rundeck; CREATE USER 'rundeck'@'localhost' IDENTIFIED BY '"${pswdmysql}"'; GRANT ALL PRIVILEGES ON rundeck.* TO 'rundeck'@'localhost'; FLUSH PRIVILEGES;"
 
 service rundeckd start
@@ -191,21 +191,21 @@ update-rc.d -f rundeckd defaults
 
 adduser rundeck root
 
-echo "Création des certificats ssl"
+echo -e "\033[30;41m Création des certificats ssl \033[0m "
 cd /etc/rundeck/ssl
-echo "Crée le mot de passe de la clé"
+echo -e "\033[30;41m Crée le mot de passe de la clé \033[0m "
 read pswdkey
-echo "Crée le mot de passe du coffre à clé"
+echo -e "\033[30;41m Crée le mot de passe du coffre à clé \033[0m "
 read pswdstore
-echo "Entrer l'adresse ip de ce serveur"
+echo -e "\033[30;41m Entrer l'adresse ip de ce serveur \033[0m "
 read ipsrv
-echo "Entrer le nom de votre service"
+echo -e "\033[30;41m Entrer le nom de votre service \033[0m "
 read nameservice
-echo "Entrer le nom de votre entreprise"
+echo -e "\033[30;41m Entrer le nom de votre entreprise \033[0m "
 read nameorg
-echo "Entrer le nom de votre ville"
+echo -e "\033[30;41m Entrer le nom de votre ville \033[0m "
 read namecity
-echo "Entrer le nom de votre région"
+echo -e "\033[30;41m Entrer le nom de votre région \033[0m "
 read namestate
 keytool -keystore /etc/rundeck/ssl/keystore -alias rundeck -genkey -keyalg RSA -keypass ${pswdkey} -storepass ${pswdstore} <<!
 ${ipsrv}
@@ -241,17 +241,17 @@ cd /etc/default
 echo "export RUNDECK_WITH_SSL=true" > rundeckd
 echo "export RDECK_HTTPS_PORT=4443" >> rundeckd
 
-echo "Voulez vous ajouter la connexion de Rundeck à un serveur smtp ( oui ou non )"
+echo -e "\033[30;41m Voulez vous ajouter la connexion de Rundeck à un serveur smtp ( oui ou non ) \033[0m "
 read repsmtp
 if [ "${repsmtp}" == "oui" ]
 	then
-	echo "Entrer l'adresse email qui sera utilisé par rundeck"
+	echo -e "\033[30;41m Entrer l'adresse email qui sera utilisé par rundeck \033[0m "
 	read rundeck_mail
-	echo "Entrer le mot de passe de l'adresse email utilisé par rundeck"
+	echo -e "\033[30;41m Entrer le mot de passe de l'adresse email utilisé par rundeck \033[0m "
 	read rundeck_mail_password
-	echo "Entrer l'adresse du serveur smtp sans le port"
+	echo -e "\033[30;41m Entrer l'adresse du serveur smtp sans le port \033[0m "
 	read rundeck_smtp
-	echo "Entrer le port du serveur smtp"
+	echo -e "\033[30;41m Entrer le port du serveur smtp \033[0m "
 	read rundeck_smtp_port
 
 
@@ -263,19 +263,19 @@ grails.mail.username=${rundeck_mail}
 grails.mail.password=${rundeck_mail_password}">> /etc/rundeck/rundeck-config.properties
 fi
 
-echo "Voulez vous ajouter la connexion de Rundeck à un serveur LDAP ( oui ou non )"
+echo -e "\033[30;41m Voulez vous ajouter la connexion de Rundeck à un serveur LDAP ( oui ou non ) \033[0m "
 read repldap
 if [ "${repldap}" == "oui" ]
 then
-	echo "Entrer le providerUrl du ldap "
+	echo -e "\033[30;41m Entrer le providerUrl du ldap \033[0m "
 	read providerldap
-	echo "Enter le bindDn (ex: CN=utilisateur,CN=Users,DC=Entreprise,...)"
+	echo -e "\033[30;41m Enter le bindDn (ex: CN=utilisateur,CN=Users,DC=Entreprise,...) \033[0m "
 	read binddn
-	echo "Enter le mot de passe du bind"
+	echo -e "\033[30;41m Enter le mot de passe du bind \033[0m "
 	read bindpassword
-	echo "Enter les roles de la base dn (ex: dc=Entreprise,dc=Sitedistant )"
+	echo -e "\033[30;41m Enter les roles de la base dn (ex: dc=Entreprise,dc=Sitedistant ) \033[0m "
 	read rolebasedn
-	echo "Enter l' OU(Organizational Unit) du ldap qui sera accepté à utiliser rundeck "
+	echo -e "\033[30;41m Enter l' OU(Organizational Unit) du ldap qui sera accepté à utiliser rundeck \033[0m "
 	read ldapgroup
 	echo "
 activedirectory {
@@ -315,11 +315,12 @@ service rundeckd start
 rm ${rundeck}
 rmdir /deck
 
-echo "Le serveur est en cours de démarrage"
-echo "L'interface web sera disponible dans 5 minutes à l'adresse suivante: "
-echo "https://${ipsrv}:4443"
+echo -e "\033[30;41m Le serveur est en cours de démarrage \033[0m "
+echo -e "\033[30;41m L'interface web sera disponible dans 5 minutes à l'adresse suivante: \033[0m "
+echo -e "\033[30;41m https://${ipsrv}:4443 \033[0m "
 if [ "${repldap}" == "non" ]
 then
-echo "Pseudo: admin 
-Mot de passe : admin " 
+echo -e "\033[30;41m Pseudo: admin 
+Mot de passe : admin \033[0m " 
 fi
+cd
