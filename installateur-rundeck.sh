@@ -1,6 +1,6 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 03/06/2019
+#Date.....: 20/06/2019
 #Version..: 1.64.3.23
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
