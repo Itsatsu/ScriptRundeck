@@ -58,9 +58,13 @@ mysql -u root -p -e "CREATE database rundeck; CREATE USER 'rundeck'@'localhost' 
 
 service rundeckd start
 echo "Le serveur se construit"
-echo  -e "\033[30;41m cette operation prend 3 minutes, le script est toujours en cours \033[0m "
+echo  -e "\033[30;41m cette operation prend 5 minutes, le script est toujours en cours \033[0m "
 sleep 1m
-echo -e "\033[30;41m Le script reprend dans 2 minutes \033[0m "
+echo -e "\033[30;41m Le script reprend dans 4 minutes \033[0m "
+sleep 1m
+echo -e "\033[30;41m Le script reprend dans 3 minute \033[0m "
+sleep 1m
+echo -e "\033[30;41m Le script reprend dans 2 minute \033[0m "
 sleep 1m
 echo -e "\033[30;41m Le script reprend dans 1 minute \033[0m "
 sleep 1m
