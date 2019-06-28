@@ -5,6 +5,9 @@
         <option name='adresse_ip' required='true'>
           <description>Entrer l'adresse ip de la machine distante à révoquer</description>
         </option>
+        <option name='port' required='true' value='22'>
+          <label>Entrer le port ssh de la machine</label>
+        </option>
         <option name='mot_de_passe' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true' secure='true' valueExposed='true'>
           <description>Enter le mot de passe root de la machine distante</description>
         </option>
@@ -28,7 +31,7 @@ entre le serveur rundeck et une autre machine(noeud)]]></description>
     <scheduleEnabled>false</scheduleEnabled>
     <sequence keepgoing='false' strategy='node-first'>
       <command>
-        <exec>expect /etc/scriptrundeck/revoke_a_key $RD_OPTION_ADRESSE_IP $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD</exec>
+        <exec>expect /etc/scriptrundeck/revoke_a_key $RD_OPTION_ADRESSE_IP $RD_OPTION_PORT $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD</exec>
       </command>
     </sequence>
     <timeout>30</timeout>
