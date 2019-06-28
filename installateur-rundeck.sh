@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 20/06/2019
-#Version..: 1.64.3.23
+#Date.....: 28/06/2019
+#Version..: 1.65.3.23
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -81,41 +81,42 @@ echo '
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 14/05/2019
-#Version..: 1.3
+#Date.....: 28/06/2019
+#Version..: 1.4
 #comment..: For Rundeck Debian server
 # Ssh key exchange script
 
 set ip [lindex $argv 0]
-set password [lindex $argv 1]
-set project_name [lindex $argv 2]
-set node_name [lindex $argv 3]
+set port [lindex $argv 1]
+set password [lindex $argv 2]
+set project_name [lindex $argv 3]
+set node_name [lindex $argv 4]
 set node_description [exec cat /tmp/description${node_name}]
-set node_tags [lindex $argv 4]
-set node_os [lindex $argv 5]
-set node_user [lindex $argv 6]
+set node_tags [lindex $argv 5]
+set node_os [lindex $argv 6]
+set node_user [lindex $argv 7]
 
-spawn sed -i "5i <node name=\"${node_name}\" description=\"${node_description}\" tags=\"${node_tags}\" hostname=\"${ip}\" osFamily=\"unix\" osName=\"${node_os}\" username=\"${node_user}\"/>" /var/rundeck/projects/${project_name}/etc/resource.xml
+spawn sed -i "5i <node name=\"${node_name}\" description=\"${node_description}\" tags=\"${node_tags}\" hostname=\"${ip}:${port}\" osFamily=\"unix\" osName=\"${node_os}\" userna$
 
-spawn ssh-copy-id -i /var/rundeck/projects/${project_name}/etc/id-rsa root@${ip} 
+spawn ssh-copy-id -p ${port} -i /var/rundeck/projects/${project_name}/etc/id-rsa root@${ip}
 sleep 2
 expect {
-	"(yes/no)? " {
-	
-	send "yes\r"
+        "(yes/no)? " {
 
-	expect "password:"	
-	sleep 4	
-	send "${password}\r"
-	
-	}
-	
-	"password:" {
-	sleep 4	
-	send "${password}\r"
-	
-	}
-	}
+        send "yes\r"
+
+        expect "password:"
+        sleep 4
+        send "${password}\r"
+
+        }
+
+        "password:" {
+        sleep 4
+        send "${password}\r"
+
+        }
+        }
 sleep 4
 interact "\r"
 ' >> /etc/scriptrundeck/key_exchange
@@ -168,19 +169,20 @@ echo '
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 14/05/2019
-#Version..: 1.3
+#Date.....: 28/06/2019
+#Version..: 1.4
 #comment..: For Rundeck Debian server
 # Script to revoke an ssh key
 
 set ip_node [lindex $argv 0]
-set password [lindex $argv 1]
-set project_name [lindex $argv 2]
-set node_name [lindex $argv 3]
+set port [lindex $argv 1]
+set password [lindex $argv 2]
+set project_name [lindex $argv 3]
+set node_name [lindex $argv 4]
 set key_value [exec cut -c1-80 /var/rundeck/projects/${project_name}/etc/id-rsa.pub]
 
 spawn sed -i "/.*name=\"${node_name}\".*/d" /var/rundeck/projects/${project_name}/etc/resource.xml
-spawn ssh root@${ip_node} sed -i \"/${key_value}/d\" /root/.ssh/authorized_keys
+spawn ssh -p ${port} root@${ip_node} sed -i \"/${key_value}/d\" /root/.ssh/authorized_keys
 sleep 5
 expect "password: "
 send "${password}\r"
