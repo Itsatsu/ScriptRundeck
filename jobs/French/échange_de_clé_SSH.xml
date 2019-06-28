@@ -5,6 +5,12 @@
         <option name='adresse_ip' required='true'>
           <description>Entrer l'adresse ip de la machine distante à ajouter</description>
         </option>
+        <option name='port' required='true' value='22'>
+          <description>Entrer le port ssh de la machine</description>
+        </option>
+        <option name='utilisateur_du_noeud' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true'>
+          <description>Enter le nom de l'utilisateur du noeud ex (root ou technicien ou ...)</description>
+        </option>
         <option name='mot_de_passe' regex='[^ &apos;")(]*' required='true' secure='true' valueExposed='true'>
           <description>Enter le mot de passe root de la machine distante</description>
         </option>
@@ -23,9 +29,6 @@
         </option>
         <option name='tags_du_noeud' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true'>
           <description>Entrer les tags utilisé pour les filtres (séparé par une virgule) ex(debian,web,test,...)</description>
-        </option>
-        <option name='utilisateur_du_noeud' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' required='true'>
-          <description>Enter le nom de l'utilisateur du noeud ex (root ou technicien ou ...)</description>
         </option>
       </options>
     </context>
@@ -49,7 +52,7 @@ entre le serveur rundeck et une autre machine(noeud)]]></description>
         <exec>echo $RD_OPTION_DESCRIPTION_DU_NOEUD &gt;&gt; /tmp/description$RD_OPTION_NOM_DU_NOEUD</exec>
       </command>
       <command>
-        <exec>expect /etc/scriptrundeck/key_exchange $RD_OPTION_ADRESSE_IP $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD $RD_OPTION_TAGS_DU_NOEUD $RD_OPTION_OS_DU_NOEUD $RD_OPTION_UTILISATEUR_DU_NOEUD</exec>
+        <exec>expect /etc/scriptrundeck/key_exchange $RD_OPTION_ADRESSE_IP $RD_OPTION_PORT $RD_OPTION_MOT_DE_PASSE $RD_OPTION_NOM_DU_PROJET $RD_OPTION_NOM_DU_NOEUD $RD_OPTION_TAGS_DU_NOEUD $RD_OPTION_OS_DU_NOEUD $RD_OPTION_UTILISATEUR_DU_NOEUD</exec>
       </command>
       <command>
         <exec>rm /tmp/description$RD_OPTION_NOM_DU_NOEUD</exec>
