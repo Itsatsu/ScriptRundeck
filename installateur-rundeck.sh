@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 28/06/2019
-#Version..: 1.65.3.23
+#Date.....: 02/07/2019
+#Version..: 1.66.3.23
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -129,13 +129,12 @@ echo '
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 13/05/2019
-#Version..: 1.3
+#Date.....: 02/07/2019
+#Version..: 1.4
 #comment..: For Rundeck Debian server
 # Ssh key creation script
 
 set project_name [lindex $argv 0]
-set password_key [lindex $argv 1]
 
 spawn ssh-keygen
 expect "id_rsa:)"
@@ -145,14 +144,14 @@ expect {
       send "y\r"
       sleep 2
       expect "no passphrase):"
-      send "${password_key}\r"
+      send "\r"
       expect "passphrase again:"
-      send "${password_key}\r"
+      send "\r"
     }
     "no passphrase):" {
-      send "${password_key}\r"
+      send "\r"
       expect "passphrase again:"
-      send "${password_key}\r"
+      send "\r"
     }
 }
 sleep 2
