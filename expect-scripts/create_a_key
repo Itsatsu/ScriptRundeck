@@ -1,30 +1,29 @@
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 13/05/2019
-#Version..: 1.3
+#Date.....: 02/07/2019
+#Version..: 1.4
 #comment..: For Rundeck Debian server
 # Ssh key creation script
 
 set project_name [lindex $argv 0]
-set password_key [lindex $argv 1]
 
 spawn ssh-keygen
-expect "id_rsa):"
+expect "id_rsa:)"
 send "/var/rundeck/projects/${project_name}/etc/id-rsa\r"
 expect {
     "Overwrite (y/n)? " {
       send "y\r"
       sleep 2
       expect "no passphrase):"
-      send "${password_key}\r"
+      send "\r"
       expect "passphrase again:"
-      send "${password_key}\r"
+      send "\r"
     }
     "no passphrase):" {
-      send "${password_key}\r"
+      send "\r"
       expect "passphrase again:"
-      send "${password_key}\r"
+      send "\r"
     }
 }
 sleep 2
