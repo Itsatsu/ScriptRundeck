@@ -6,14 +6,10 @@
           <description><![CDATA[Enter le nom du projet pour le quel vous voulez creer la cle
 ]]></description>
         </option>
-        <option name='passephrase_de_la_cle' regex='[^\"\&apos;\/\&lt;\&gt;\$\(\)\|\{\}\#\[\]\`\\ ]*' secure='true' valueExposed='true'>
-          <description>Entrer une passephrase pour généré une clé rsa plus compliqué (ne pas mettre d'espace)</description>
-        </option>
       </options>
     </context>
     <defaultTab>summary</defaultTab>
-    <description><![CDATA[Le script permet de crée une clé ssh
-au format id-rsa]]></description>
+    <description>Le script permet de crée une clé ssh au format id-rsa sur le serveur rundeck</description>
     <executionEnabled>true</executionEnabled>
     <id>a386c49b-9731-4ae9-903e-56deae37f9c3</id>
     <loglevel>INFO</loglevel>
@@ -22,7 +18,7 @@ au format id-rsa]]></description>
     <scheduleEnabled>true</scheduleEnabled>
     <sequence keepgoing='false' strategy='node-first'>
       <command>
-        <exec>expect /etc/scriptrundeck/create_a_key $RD_OPTION_NOM_DU_PROJET $RD_OPTION_PASSEPHRASE_DE_LA_CLE</exec>
+        <exec>expect /etc/scriptrundeck/create_a_key $RD_OPTION_NOM_DU_PROJET</exec>
       </command>
     </sequence>
     <uuid>a386c49b-9731-4ae9-903e-56deae37f9c3</uuid>
