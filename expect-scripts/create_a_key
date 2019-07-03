@@ -1,15 +1,15 @@
 #!/usr/bin/expect
 
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 02/07/2019
-#Version..: 1.4
+#Date.....: 03/07/2019
+#Version..: 1.41
 #comment..: For Rundeck Debian server
 # Ssh key creation script
 
 set project_name [lindex $argv 0]
 
 spawn ssh-keygen
-expect "id_rsa:)"
+expect "id_rsa):"
 send "/var/rundeck/projects/${project_name}/etc/id-rsa\r"
 expect {
     "Overwrite (y/n)? " {
