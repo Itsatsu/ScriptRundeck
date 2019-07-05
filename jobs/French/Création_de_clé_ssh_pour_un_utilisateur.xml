@@ -1,0 +1,32 @@
+<joblist>
+  <job>
+    <context>
+      <options preserveOrder='true'>
+        <option name='prenom.nom_utilisateur' required='true'>
+          <description>Entrer le prénom et le nom d'un utilisateur de cette façon ex: prenom.nom</description>
+        </option>
+        <option name='mail_utilisateur' required='true'>
+          <description>Enter l'adresse email de l'utilisateur</description>
+        </option>
+        <option name='mail_administrateur' required='true'>
+          <description>Enter le mail de l'administrateur qui sera charger d'inclure la clé publique sur le ou les serveurs</description>
+        </option>
+        <option name='mot_de_pass_du_zip' required='true' secure='true' valueExposed='true' />
+      </options>
+    </context>
+    <defaultTab>summary</defaultTab>
+    <description>Le script permet de créer un jeux de clé ssh ainsi qu'un .ppk pour putty et les envois par mail à la personne concerné</description>
+    <executionEnabled>true</executionEnabled>
+    <id>b2c03e4a-f100-4b1d-9b9e-d7ccf95cc7e5</id>
+    <loglevel>INFO</loglevel>
+    <name>Création de clé ssh pour un utilisateur</name>
+    <nodeFilterEditable>false</nodeFilterEditable>
+    <scheduleEnabled>true</scheduleEnabled>
+    <sequence keepgoing='false' strategy='node-first'>
+      <command>
+        <exec>expect /etc/scriptrundeck/create_user_key $RD_OPTION_PRENOM_NOM_UTILISATEUR $RD_OPTION_MAIL_UTILISATEUR $RD_OPTION_MAIL_ADMINISTRATEUR $RD_OPTION_MOT_DE_PASS_DU_ZIP</exec>
+      </command>
+    </sequence>
+    <uuid>b2c03e4a-f100-4b1d-9b9e-d7ccf95cc7e5</uuid>
+  </job>
+</joblist>

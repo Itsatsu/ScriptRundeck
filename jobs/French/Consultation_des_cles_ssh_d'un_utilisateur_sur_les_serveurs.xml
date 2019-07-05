@@ -1,0 +1,100 @@
+<joblist>
+  <job>
+    <context>
+      <options preserveOrder='true'>
+        <option name='utilisateur' required='true'>
+          <description>ex : prénom.nom</description>
+        </option>
+      </options>
+    </context>
+    <defaultTab>summary</defaultTab>
+    <description></description>
+    <dispatch>
+      <excludePrecedence>true</excludePrecedence>
+      <keepgoing>true</keepgoing>
+      <rankOrder>ascending</rankOrder>
+      <successOnEmptyNodeFilter>false</successOnEmptyNodeFilter>
+      <threadcount>1</threadcount>
+    </dispatch>
+    <executionEnabled>true</executionEnabled>
+    <id>d9033581-4a05-4e11-9e29-01c746771e18</id>
+    <loglevel>INFO</loglevel>
+    <name>Consultation des cles ssh d'un utilisateur sur les serveurs</name>
+    <nodeFilterEditable>true</nodeFilterEditable>
+    <nodefilters>
+      <filter></filter>
+    </nodefilters>
+    <nodesSelectedByDefault>true</nodesSelectedByDefault>
+    <scheduleEnabled>true</scheduleEnabled>
+    <sequence keepgoing='false' strategy='node-first'>
+      <command>
+        <script><![CDATA[#!/bin/sh
+echo " "
+echo " "
+cd
+nbcl="0"
+test=`ls /home`
+usersearch="@option.utilisateur@"
+usersearchlow=`echo "${usersearch}" | tr '[:upper:]' '[:lower:]'`
+if [ "${test}" != ""  ];
+        then
+
+        echo "${test}" > /tmp/user.server
+                lshome="$(</tmp/user.server)"
+                while read line
+                        do
+                        echo "Verification de l'utilisateur ${line}"
+                        echo "----------------------------------------------------------------"
+                        lssshuser=`ls -l -a /home/${line}/ |grep '\(\.ssh\)'| awk '{print $9}'`
+                        if [ "${lssshuser}" = ".ssh" ];
+                        then
+                                echo "dossier .ssh present"
+                                cd /home/${line}/.ssh/
+                                fauth=`find authorized_keys`
+                                if [ "${fauth}" = "authorized_keys" ];
+                                then
+                                        echo "fichier authorized_keys present"
+                                        cle=`grep -i ${usersearch} /home/${line}/.ssh/authorized_keys | awk '{print $3}'`
+                                        clelow= `echo "${cle}" | tr '[:upper:]' '[:lower:]'`
+                                        if [ "${clelow}" = "${usersearchlow}" ]
+                                        then
+                                                nbcl=$((${nbcl} + 1 ))
+                                                echo "${usersearch} a une cle presente sur l'utilisateur ${line}"
+                                                echo "----------------------------------------------------------------"
+                                        fi
+                                fi
+                        cd
+                        fi
+
+                done <  /tmp/user.server
+fi
+
+cd /root/.ssh
+echo "Verification de l'utilisateur root"
+echo "----------------------------------------------------------------"
+
+cleroot=`grep -i ${usersearch} /root/.ssh/authorized_keys | awk '{print $3}'`
+clerootlow=`echo "${cleroot}" | tr '[:upper:]' '[:lower:]'`
+if [ "${clerootlow}" = "${usersearchlow}" ]
+then
+        echo "fichier authorized_keys present"
+        nbcl=$((${nbcl} + 1 ))
+        echo "${usersearch} a une cle presente sur l'utilisateur root "
+        echo "----------------------------------------------------------------"
+fi
+rm -f /tmp/user.server
+
+echo " "
+echo " "
+if [ "$nbcl" = "0" ]
+then
+        echo "${usersearch} n'a pas de cle sur le serveur"
+        exit 2
+fi
+]]></script>
+        <scriptargs />
+      </command>
+    </sequence>
+    <uuid>d9033581-4a05-4e11-9e29-01c746771e18</uuid>
+  </job>
+</joblist>
