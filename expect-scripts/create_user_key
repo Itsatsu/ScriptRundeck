@@ -1,0 +1,61 @@
+#!/usr/bin/expect
+#Author...: Eric Gigondan (Itsatsu)
+#Date.....: 05/07/2019
+#Version..: 1.1
+#comment..: For Rundeck Debian server
+#
+
+set username [lindex $argv 0]
+set user_email [lindex $argv 1]
+set admin_email [lindex $argv 2]
+set password_zip [lindex $argv 3]
+
+
+cd /etc/rundeck/coffreacle/
+exec mkdir ${username}/
+
+cd ${username}
+
+spawn ssh-keygen -C ${username}
+sleep 1
+expect "id_rsa):"
+send "/etc/rundeck/coffreacle/${username}/${username}_id_rsa\r"
+expect {
+    "Overwrite (y/n)? " {
+      send "n\r"
+	spawn echo "L'utilisateur ${username} a deja une paire de cle a son nom " 
+	spawn exit 2
+    }
+    "no passphrase):" {
+      sleep 1
+      send "\r"
+      sleep 1
+      expect "passphrase again:"
+      send "\r"
+    }
+}
+sleep 1
+spawn puttygen -C "${username}" ${username}_id_rsa -o ${username}.ppk
+sleep 2
+
+# zip
+
+spawn zip --encrypt ${username}.zip ${username}.ppk ${username}_id_rsa ${username}_id_rsa.pub
+sleep 1 
+expect "Enter password:"
+sleep 1
+send "${password_zip}\r"
+sleep 1
+expect "Verify password:"
+sleep 1
+send "${password_zip}\r"
+
+expect "${username}_id_rsa.pub"
+sleep 1 
+exec echo "voici le mot de passe pour avoir accces a votre archive : ${password_zip} " | mutt -e "set realname=Rundeck@operis.fr ; set from=rundeck@operis.fr" -s "Votre cle ssh pour les serveurs d'operis" -a /etc/rundeck/coffreacle/${username}/${username}.zip -- ${user_email}
+sleep 2
+exec echo "voici la cle publique de ${username} que vous allez devoir ajouter sur les serveurs" | mutt -e "set realname=Rundeck@operis.fr ; set from=rundeck@operis.fr" -s " cle ssh a ajouter sur les serveurs d'operis" -a /etc/rundeck/coffreacle/${username}/${username}_id_rsa.pub -- ${admin_email}
+
+sleep 1
+
+interact "\r"
