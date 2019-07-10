@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
 #Date.....: 10/07/2019
-#Version..: 1.67.3.23
+#Version..: 1.68.3.23
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -96,7 +96,7 @@ set node_tags [lindex $argv 5]
 set node_os [lindex $argv 6]
 set node_user [lindex $argv 7]
 
-spawn sed -i "5i <node name=\"${node_name}\" description=\"${node_description}\" tags=\"${node_tags}\" hostname=\"${ip}:${port}\" osFamily=\"unix\" osName=\"${node_os}\" userna$
+spawn sed -i "5i <node name=\"${node_name}\" description=\"${node_description}\" tags=\"${node_tags}\" hostname=\"${ip}:${port}\" osFamily=\"unix\" osName=\"${node_os}\" username=\"${node_user}\"/>" /var/rundeck/projects/${project_name}/etc/resource.xml
 
 spawn ssh-copy-id -p ${port} -i /var/rundeck/projects/${project_name}/etc/id-rsa root@${ip}
 sleep 2
