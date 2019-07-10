@@ -1,7 +1,7 @@
 #!/usr/bin/expect
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 05/07/2019
-#Version..: 1.1
+#Date.....: 10/07/2019
+#Version..: 1.3
 #comment..: For Rundeck Debian server
 #
 
@@ -49,13 +49,15 @@ sleep 1
 expect "Verify password:"
 sleep 1
 send "${password_zip}\r"
-
-expect "${username}_id_rsa.pub"
-sleep 1 
-exec echo "voici le mot de passe pour avoir accces a votre archive : ${password_zip} " | mutt -e "set realname=Rundeck@operis.fr ; set from=rundeck@operis.fr" -s "Votre cle ssh pour les serveurs d'operis" -a /etc/rundeck/coffreacle/${username}/${username}.zip -- ${user_email}
 sleep 2
-exec echo "voici la cle publique de ${username} que vous allez devoir ajouter sur les serveurs" | mutt -e "set realname=Rundeck@operis.fr ; set from=rundeck@operis.fr" -s " cle ssh a ajouter sur les serveurs d'operis" -a /etc/rundeck/coffreacle/${username}/${username}_id_rsa.pub -- ${admin_email}
-
+expect "${username}_id_rsa.pub"
+sleep 2 
+exec echo "voici le mot de passe pour avoir accces a votre archive : ${password_zip} " | mutt -e "set realname=Rundeck@operis.fr ; set from=rundeck@operis.fr " -s "Votre cle ssh pour les serveurs d'operis" -a /etc/rundeck/coffreacle/${username}/${username}.zip -- ${user_email}
+sleep 2
+exec echo "Les cles ssh de ${username} ont bien ete cree, rendez-vous sur rundeck pour ajouter l'acces a des serveur. " | mutt -e "set realname=Rundeck@operis.fr ; set from=rundeck@operis.fr" -s "Cles ssh de ${username} cree" -- ${admin_email}
 sleep 1
 
+spawn sed -i "3i ,\"${username}\"" /var/www/html/option/choix_user_key.json
+sleep 2 
 interact "\r"
+
