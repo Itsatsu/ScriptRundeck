@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 02/07/2019
-#Version..: 1.66.3.23
+#Date.....: 10/07/2019
+#Version..: 1.67.3.23
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -309,8 +309,9 @@ activedirectory {
 	chown rundeck:rundeck /etc/rundeck/jaas-activedirectory.conf
 	chmod 755 /etc/rundeck/jaas-activedirectory.conf
 
-	sed -i "s/\$JAAS_CONF/\/etc\/rundeck\/jaas-activedirectory.conf/" /etc/rundeck/profile
-	sed -i "s/\$LOGIN_MODULE/activedirectory/" /etc/rundeck/profile
+	echo "RDECK_JVM_OPTS= \"-Drundeck.jaaslogin=true \
+       -Djava.security.auth.login.config=/etc/rundeck/jaas-activedirectory.conf \
+       -Dloginmodule.name=activedirectory \"" >> /etc/default/rundeckd
 
 	sed -i "s/admin/${ldapgroup}/" /etc/rundeck/admin.aclpolicy
 
