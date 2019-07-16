@@ -26,8 +26,10 @@ rm /tmp/tmp.port
 
 echo "Installation de openjdk 8"
 apt-get install -y openjdk-8-jdk-headless
-echo "installation d' expect"
+echo "installation d'expect"
 apt-get install -y expect
+echo "installation de mutt"
+apt-get install -y mutt
 echo " "
 echo "Téléchargement du packet rundeck"
 mkdir /deck
@@ -38,6 +40,7 @@ echo "Installation de uuid"
 apt-get install -y uuid-runtime
 grep -lr -e "rundeck.*" /deck/ >> /tmp/versionrun.txt
 rundeck="$(</tmp/versionrun.txt)"
+
 
 echo "Installation du packet Rundeck"
 dpkg -i ${rundeck}
