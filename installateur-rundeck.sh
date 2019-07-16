@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
-#Date.....: 10/07/2019
-#Version..: 1.68.3.23
+#Date.....: 16/07/2019
+#Version..: 1.69.3.23
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -317,6 +317,15 @@ activedirectory {
 
 fi
 service rundeckd start
+mkdir /etc/rundeck/coffreacle
+mkdir /var/rundeck/resource
+mkdir /var/rundeck/resource/xml
+mkdir /var/rundeck/resource/cle
+chown rundeck:rundeck /etc/rundeck/coffreacle
+chown rundeck:rundeck /var/rundeck/resource
+chown rundeck:rundeck /var/rundeck/resource/xml
+chown rundeck:rundeck /var/rundeck/resource/cle
+chmod 755 /etc/rundeck/coffreacle
 
 rm ${rundeck}
 rmdir /deck
