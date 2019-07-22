@@ -1,7 +1,7 @@
 #! /bin/bash
 #Author...: Eric Gigondan (Itsatsu)
 #Date.....: 16/07/2019
-#Version..: 1.69.3.23
+#Version..: 1.69.3.24
 #comment..: Installer for debian 9 !
 #Script that allows the installation of the Rundeck master server 
 echo "Installation de net-tools"
@@ -33,7 +33,7 @@ apt-get install -y mutt
 echo " "
 echo "Téléchargement du packet rundeck"
 mkdir /deck
-dlink="https://dl.bintray.com/rundeck/rundeck-deb/rundeck_3.0.23.20190619-1.201906191858_all.deb"
+dlink="https://dl.bintray.com/rundeck/rundeck-deb/rundeck_3.0.24.20190719-1.201907192054_all.deb"
 wget -P /deck ${dlink}
 
 echo "Installation de uuid"
